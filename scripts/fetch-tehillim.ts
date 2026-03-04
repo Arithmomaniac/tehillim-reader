@@ -83,8 +83,22 @@ function stripHtml(html: string): string {
 }
 
 function splitIntoWords(text: string): string[] {
-  // Split on whitespace, filter out empty strings and maqaf-only entries
-  return text.split(/\s+/).filter(w => w.length > 0);
+  // Split on whitespace first, then split maqaf-joined words (U+05BE)
+  // e.g. "אַשְׁרֵי־הָאִישׁ" → ["אַשְׁרֵי", "הָאִישׁ"]
+  return text
+    .split(/\s+/)
+    .flatMap(w => w.split(/\u05BE/))
+    // Drop parashah section markers {פ}, {ס}, {ר}, {נ}
+    .filter(w => !/^\{.\}$/.test(w))
+    // Strip brackets from qere form: [word] → word, also stray brackets
+    .map(w => w.replace(/[\[\]]/g, ''))
+    // Strip combining grapheme joiner (U+034F)
+    .map(w => w.replace(/\u034F/g, ''))
+    // Drop ketiv (written) form in parens — keep qere (read) form
+    .filter(w => !/^\(.*\)$/.test(w))
+    // Strip stray parens (partial ketiv/qere fragments)
+    .map(w => w.replace(/[()]/g, ''))
+    .filter(w => w.length > 0);
 }
 
 function getSyllables(word: string): string[] {
