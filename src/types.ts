@@ -23,6 +23,7 @@ export interface WordData {
 
 export type HighlightMode = 'word' | 'syllable';
 export type ChapterOrder = 'sequential' | 'random';
+export type ThemeMode = 'warm' | 'light' | 'dark';
 
 export interface AppSettings {
   highlightMode: HighlightMode;
@@ -30,6 +31,7 @@ export interface AppSettings {
   fontSize: number;
   chapterOrder: ChapterOrder;
   autoAdvance: boolean;
+  theme: ThemeMode;
 }
 
 export interface NavigationPosition {
@@ -45,4 +47,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   fontSize: 36,
   chapterOrder: 'sequential',
   autoAdvance: true,
+  theme: 'warm',
 };

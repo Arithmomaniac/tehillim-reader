@@ -75,6 +75,10 @@ function stripHtml(html: string): string {
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    // Strip cantillation marks (taamim) U+0591–U+05AF
+    // Strip punctuation: paseq U+05C0, upper/lower dot U+05C4-05C5, nun hafukha U+05C6
+    // Keep sof pasuq U+05C3 (end-of-verse marker)
+    .replace(/[\u0591-\u05AF\u05C0\u05C4-\u05C6]/g, '')
     .trim();
 }
 

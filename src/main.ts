@@ -189,6 +189,14 @@ class TehillimReaderApp {
       this.settings.autoAdvance = (e.target as HTMLInputElement).checked;
       saveSettings(this.settings);
     });
+
+    // Theme toggle
+    for (const theme of ['warm', 'light', 'dark'] as const) {
+      document.getElementById(`theme-${theme}`)!.addEventListener('click', () => {
+        this.settings.theme = theme;
+        this.applyAndSave();
+      });
+    }
   }
 
   private setupChapterSelector(): void {
@@ -276,6 +284,11 @@ class TehillimReaderApp {
 
     // Auto-advance
     (document.getElementById('auto-advance') as HTMLInputElement).checked = this.settings.autoAdvance;
+
+    // Theme
+    for (const theme of ['warm', 'light', 'dark']) {
+      document.getElementById(`theme-${theme}`)!.classList.toggle('active', this.settings.theme === theme);
+    }
   }
 }
 

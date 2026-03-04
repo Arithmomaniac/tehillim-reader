@@ -1,5 +1,6 @@
 /* ===== CSS Variables ===== */
-:root {
+/* Warm (default parchment) */
+:root, [data-theme="warm"] {
   --highlight-color: #FFD700;
   --font-size: 36px;
   --bg-color: #faf8f0;
@@ -11,6 +12,36 @@
   --btn-bg: #3c2415;
   --btn-hover: #5a3a25;
   --highlight-alpha: 0.35;
+  --verse-num-color: #8a7a6a;
+  --word-hover: rgba(0, 0, 0, 0.05);
+}
+
+/* Pure white / light */
+[data-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --panel-bg: #ffffff;
+  --border-color: #d0d0d0;
+  --header-bg: #f0f0f0;
+  --header-text: #000000;
+  --btn-bg: #e0e0e0;
+  --btn-hover: #c8c8c8;
+  --verse-num-color: #888888;
+  --word-hover: rgba(0, 0, 0, 0.06);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --bg-color: #1a1a2e;
+  --text-color: #e8e8e8;
+  --panel-bg: #252540;
+  --border-color: #3a3a5c;
+  --header-bg: #16162a;
+  --header-text: #e8e8e8;
+  --btn-bg: #2a2a4a;
+  --btn-hover: #3a3a5c;
+  --verse-num-color: #8888aa;
+  --word-hover: rgba(255, 255, 255, 0.08);
 }
 
 /* ===== Reset & Base ===== */
@@ -97,7 +128,7 @@ body {
 
 .verse-number {
   font-size: 0.5em;
-  color: #8a7a6a;
+  color: var(--verse-num-color);
   vertical-align: super;
   margin-left: 4px;
   user-select: none;
@@ -114,7 +145,7 @@ body {
 }
 
 .word:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--word-hover);
 }
 
 .syllable {

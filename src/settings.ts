@@ -23,4 +23,6 @@ export function applySettingsToDOM(settings: AppSettings): void {
   const root = document.documentElement;
   root.style.setProperty('--highlight-color', settings.highlightColor);
   root.style.setProperty('--font-size', `${settings.fontSize}px`);
+  // Theme: set data attribute so CSS can pick it up
+  root.dataset.theme = settings.theme;
 }
