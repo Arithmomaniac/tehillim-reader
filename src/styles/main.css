@@ -219,10 +219,12 @@ body {
   background: var(--panel-bg);
   border-radius: 12px;
   width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
+  max-width: 560px;
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-header {
@@ -242,12 +244,23 @@ body {
 }
 
 .panel-body {
-  padding: 20px;
+  padding: 16px 20px;
+}
+
+#settings-panel .panel-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
 }
 
 /* ===== Settings ===== */
 .setting-group {
-  margin-bottom: 20px;
+  margin-bottom: 0;
+}
+
+/* Let font-size slider span full width since range inputs need room */
+.setting-group:has(input[type="range"]) {
+  grid-column: 1 / -1;
 }
 
 .setting-group > label {
@@ -304,6 +317,33 @@ input[type="checkbox"] {
   height: 18px;
   margin-left: 8px;
   accent-color: var(--header-bg);
+}
+
+.panel-footer {
+  padding: 10px 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--verse-num-color);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+}
+
+.github-link:hover {
+  color: var(--text-color);
+}
+
+/* ===== Responsive — single-column settings on mobile ===== */
+@media (max-width: 500px) {
+  #settings-panel .panel-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===== Chapter Grid ===== */
