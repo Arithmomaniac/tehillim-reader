@@ -4,12 +4,18 @@ A Hebrew reading helper for Tehillim (Psalms) with word/syllable highlighting.
 
 Built for reading Tehillim with kids — highlights the current word or syllable as you navigate through the text using keyboard, mouse, or scroll wheel.
 
+![Main reading view](docs/screenshot-main.png)
+
+![Settings panel](docs/screenshot-settings.png)
+
 ## Features
 
 - 📖 All 150 Psalms with full nikud (vowel points)
 - 🔤 **Word mode**: highlights entire words
 - 🔡 **Syllable mode**: highlights individual syllables (powered by [havarotjs](https://github.com/charlesLoder/havarotjs))
+- 📚 **Reading mode toggle**: casual (merged syllables) vs Tiberian (academic) pronunciation
 - 🎨 Configurable highlight color
+- 🌗 Three themes: warm (parchment), light, and dark
 - ⌨️ Keyboard navigation (arrow keys, space, enter)
 - 🖱️ Click-to-jump and scroll wheel navigation
 - 📱 Responsive design for tablet reading
