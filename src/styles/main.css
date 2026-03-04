@@ -257,6 +257,12 @@ body {
   margin-bottom: 8px;
 }
 
+.setting-hint {
+  font-size: 13px;
+  color: var(--verse-num-color);
+  margin-top: 4px;
+}
+
 .toggle-group {
   display: flex;
   gap: 8px;

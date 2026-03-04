@@ -17,6 +17,7 @@ export interface Verse {
 export interface WordData {
   text: string;
   syllables: string[];
+  syllablesTiberian: string[];
   verseIndex: number;
   wordIndex: number;
 }
@@ -32,6 +33,7 @@ export interface AppSettings {
   chapterOrder: ChapterOrder;
   autoAdvance: boolean;
   theme: ThemeMode;
+  readingMode: boolean; // true = casual/traditional, false = Tiberian/academic
 }
 
 export interface NavigationPosition {
@@ -48,4 +50,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   chapterOrder: 'sequential',
   autoAdvance: true,
   theme: 'warm',
+  readingMode: true,
 };

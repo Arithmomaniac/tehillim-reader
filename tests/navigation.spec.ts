@@ -265,3 +265,60 @@ test.describe('Tehillim Reader — Chapter Selection', () => {
     await expect(currentCell).toHaveAttribute('data-chapter', '1');
   });
 });
+
+test.describe('Tehillim Reader — Reading Mode Toggle', () => {
+  test('reading mode checkbox defaults to checked (casual)', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#settings-btn').click();
+    const checkbox = page.locator('#reading-mode');
+    await expect(checkbox).toBeChecked();
+  });
+
+  test('toggling reading mode changes syllable count for first word', async ({ page }) => {
+    await page.goto('/');
+    // Switch to syllable mode first
+    await page.locator('#settings-btn').click();
+    await page.locator('#mode-syllable').click();
+    await page.locator('#settings-close').click();
+
+    // In casual mode, first word אַשְׁרֵי has 2 syllables
+    const casualSyllables = await page.locator('.word[data-verse="0"][data-word="0"] .syllable').count();
+    expect(casualSyllables).toBe(2);
+
+    // Toggle to Tiberian mode
+    await page.locator('#settings-btn').click();
+    await page.locator('#reading-mode').uncheck();
+    await page.locator('#settings-close').click();
+
+    // In Tiberian mode, first word אַשְׁרֵי has 3 syllables
+    const tiberianSyllables = await page.locator('.word[data-verse="0"][data-word="0"] .syllable').count();
+    expect(tiberianSyllables).toBe(3);
+  });
+
+  test('reading mode persists across reload', async ({ page }) => {
+    await page.goto('/');
+    // Uncheck reading mode
+    await page.locator('#settings-btn').click();
+    await page.locator('#reading-mode').uncheck();
+    await page.locator('#settings-close').click();
+
+    // Reload
+    await page.reload();
+    await page.locator('#settings-btn').click();
+    await expect(page.locator('#reading-mode')).not.toBeChecked();
+  });
+
+  test('navigation works correctly after switching reading mode', async ({ page }) => {
+    await page.goto('/');
+    // Switch to syllable mode + Tiberian
+    await page.locator('#settings-btn').click();
+    await page.locator('#mode-syllable').click();
+    await page.locator('#reading-mode').uncheck();
+    await page.locator('#settings-close').click();
+
+    // Navigate forward — should move through Tiberian syllable count
+    await page.keyboard.press('ArrowLeft');
+    const highlighted = page.locator('.syllable.highlighted');
+    await expect(highlighted).toHaveCount(1);
+  });
+});

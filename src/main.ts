@@ -190,6 +190,12 @@ class TehillimReaderApp {
       saveSettings(this.settings);
     });
 
+    // Reading mode (casual vs Tiberian syllables)
+    document.getElementById('reading-mode')!.addEventListener('change', (e) => {
+      this.settings.readingMode = (e.target as HTMLInputElement).checked;
+      this.applyAndSave();
+    });
+
     // Theme toggle
     for (const theme of ['warm', 'light', 'dark'] as const) {
       document.getElementById(`theme-${theme}`)!.addEventListener('click', () => {
@@ -284,6 +290,9 @@ class TehillimReaderApp {
 
     // Auto-advance
     (document.getElementById('auto-advance') as HTMLInputElement).checked = this.settings.autoAdvance;
+
+    // Reading mode
+    (document.getElementById('reading-mode') as HTMLInputElement).checked = this.settings.readingMode;
 
     // Theme
     for (const theme of ['warm', 'light', 'dark']) {

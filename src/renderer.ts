@@ -43,13 +43,15 @@ export class Renderer {
         wordSpan.dataset.verse = String(vIdx);
         wordSpan.dataset.word = String(wIdx);
 
-        if (settings.highlightMode === 'syllable' && word.syllables.length > 1) {
+        const syllables = settings.readingMode ? word.syllables : word.syllablesTiberian;
+
+        if (settings.highlightMode === 'syllable' && syllables.length > 1) {
           // Render individual syllable spans
-          for (let sIdx = 0; sIdx < word.syllables.length; sIdx++) {
+          for (let sIdx = 0; sIdx < syllables.length; sIdx++) {
             const sylSpan = document.createElement('span');
             sylSpan.className = 'syllable';
             sylSpan.dataset.syllable = String(sIdx);
-            sylSpan.textContent = word.syllables[sIdx];
+            sylSpan.textContent = syllables[sIdx];
             wordSpan.appendChild(sylSpan);
           }
         } else {

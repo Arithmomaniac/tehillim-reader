@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 interface WordData {
   text: string;
   syllables: string[];
+  syllablesTiberian: string[];
   verseIndex: number;
   wordIndex: number;
 }
@@ -101,9 +102,19 @@ function splitIntoWords(text: string): string[] {
     .filter(w => w.length > 0);
 }
 
-function getSyllables(word: string): string[] {
+// Casual/traditional reading mode: merge shevas into preceding syllable
+const READING_MODE_OPTS = {
+  longVowels: false,
+  wawShureq: false,
+  shevaAfterMeteg: false,
+  article: false,
+  sqnmlvy: false,
+  shevaWithMeteg: false,
+};
+
+function getSyllables(word: string, opts: Record<string, unknown> = {}): string[] {
   try {
-    const text = new Text(word);
+    const text = new Text(word, opts);
     const syllables = text.syllables.map(s => s.text);
     if (syllables.length > 0 && syllables.join('').length > 0) {
       return syllables;
@@ -162,10 +173,12 @@ function processChapter(chapterNum: number, verseTexts: string[]): Chapter {
 
     for (let wIdx = 0; wIdx < rawWords.length; wIdx++) {
       const wordText = rawWords[wIdx];
-      const syllables = getSyllables(wordText);
+      const syllables = getSyllables(wordText, READING_MODE_OPTS);
+      const syllablesTiberian = getSyllables(wordText);
       words.push({
         text: wordText,
         syllables,
+        syllablesTiberian,
         verseIndex: vIdx,
         wordIndex: wIdx,
       });

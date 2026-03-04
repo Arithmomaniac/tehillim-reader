@@ -1,6 +1,11 @@
 import { Chapter, WordData, NavigationPosition, AppSettings } from './types';
 import { flattenWords } from './data-loader';
 
+/** Get the active syllable array for a word based on reading mode */
+function getWordSyllables(word: WordData, settings: AppSettings): string[] {
+  return settings.readingMode ? word.syllables : word.syllablesTiberian;
+}
+
 /**
  * Manages the current reading position and provides navigation methods.
  */
@@ -87,7 +92,7 @@ export class Navigator {
   moveForward(): boolean {
     if (this.settings.highlightMode === 'syllable') {
       const word = this.getCurrentWord();
-      if (word && this.pos.syllableIndex < word.syllables.length - 1) {
+      if (word && this.pos.syllableIndex < getWordSyllables(word, this.settings).length - 1) {
         this.pos.syllableIndex++;
         this.onPositionChange(this.pos);
         return true;
@@ -126,7 +131,7 @@ export class Navigator {
       if (this.settings.highlightMode === 'syllable') {
         const word = this.getCurrentWord();
         if (word) {
-          this.pos.syllableIndex = word.syllables.length - 1;
+          this.pos.syllableIndex = getWordSyllables(word, this.settings).length - 1;
         }
       } else {
         this.pos.syllableIndex = 0;
@@ -193,7 +198,7 @@ export class Navigator {
     if (!atLastWord) return false;
     if (this.settings.highlightMode === 'syllable') {
       const word = this.getCurrentWord();
-      return !word || this.pos.syllableIndex >= word.syllables.length - 1;
+      return !word || this.pos.syllableIndex >= getWordSyllables(word, this.settings).length - 1;
     }
     return true;
   }
