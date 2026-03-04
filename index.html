@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>קורא תהילים — Tehillim Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="header">
+      <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙️</button>
+      <h1 id="chapter-title">תהילים</h1>
+      <button id="chapter-select-btn" class="icon-btn" aria-label="Select chapter">📖</button>
+    </header>
+
+    <main id="reading-area" tabindex="0">
+      <div id="text-container"></div>
+    </main>
+
+    <footer id="nav-footer">
+      <button id="prev-chapter" aria-label="Previous chapter">פרק הבא ►</button>
+      <button id="next-chapter" aria-label="Next chapter">◄ פרק הקודם</button>
+    </footer>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings-overlay" class="overlay hidden">
+    <div id="settings-panel" class="panel">
+      <div class="panel-header">
+        <h2>הגדרות</h2>
+        <button id="settings-close" class="icon-btn" aria-label="Close settings">✕</button>
+      </div>
+      <div class="panel-body">
+        <div class="setting-group">
+          <label>מצב הדגשה</label>
+          <div class="toggle-group">
+            <button id="mode-word" class="toggle-btn active" data-mode="word">מילה</button>
+            <button id="mode-syllable" class="toggle-btn" data-mode="syllable">הברה</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label for="highlight-color">צבע הדגשה</label>
+          <input type="color" id="highlight-color" value="#FFD700" />
+        </div>
+        <div class="setting-group">
+          <label for="font-size-slider">גודל גופן: <span id="font-size-value">36</span>px</label>
+          <input type="range" id="font-size-slider" min="20" max="72" value="36" />
+        </div>
+        <div class="setting-group">
+          <label>סדר פרקים</label>
+          <div class="toggle-group">
+            <button id="order-sequential" class="toggle-btn active" data-order="sequential">לפי סדר</button>
+            <button id="order-random" class="toggle-btn" data-order="random">אקראי</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label>
+            <input type="checkbox" id="auto-advance" checked />
+            עבור לפרק הבא בסיום
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chapter Selector -->
+  <div id="chapter-overlay" class="overlay hidden">
+    <div id="chapter-panel" class="panel">
+      <div class="panel-header">
+        <h2>בחר פרק</h2>
+        <button id="chapter-close" class="icon-btn" aria-label="Close chapter selector">✕</button>
+      </div>
+      <div class="panel-body">
+        <div id="chapter-grid"></div>
+        <button id="random-chapter" class="action-btn">🎲 פרק אקראי</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
