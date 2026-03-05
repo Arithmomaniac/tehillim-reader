@@ -71,7 +71,7 @@ function toHebrewNumeral(n: number): string {
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, '')
-    .replace(/&thinsp;/g, '')
+    .replace(/&thinsp;/g, ' ')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
@@ -112,7 +112,17 @@ const READING_MODE_OPTS = {
   shevaWithMeteg: false,
 };
 
+// Tetragrammaton (YHVH) — always treat the entire word as one syllable
+const YHVH_RE = /\u05D9\u05D4\u05D5\u05D4/;
+
+function containsYHVH(word: string): boolean {
+  return YHVH_RE.test(word.replace(/[\u0591-\u05C7]/g, ''));
+}
+
 function getSyllables(word: string, opts: Record<string, unknown> = {}): string[] {
+  if (containsYHVH(word)) {
+    return [word];
+  }
   try {
     const text = new Text(word, opts);
     const syllables = text.syllables.map(s => s.text);
