@@ -190,13 +190,7 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* ===== Kamatz Katan Indicators (character-level) ===== */
-/* Tint: color the kamatz katan grapheme */
-.kamatz-tint {
-  color: steelblue;
-}
-
-/* Dot: small colored dot below the character */
+/* ===== Kamatz Katan Indicator ===== */
 .kamatz-dot {
   position: relative;
 }
@@ -212,11 +206,6 @@ body {
   height: 4px;
   border-radius: 50%;
   background: steelblue;
-}
-
-/* Bold: make the kamatz katan grapheme bold */
-.kamatz-bold {
-  font-weight: 700;
 }
 
 /* ===== Footer Navigation ===== */

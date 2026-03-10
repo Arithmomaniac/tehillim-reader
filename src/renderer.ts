@@ -3,9 +3,15 @@ import { toHebrewNumeral, isDivineName, getDivineNameForm, stripNikkud } from '.
 
 const KAMATZ_KATAN = '\u05C7';
 
+/** Hebrew consonant range U+05D0–U+05EA */
+function isConsonant(ch: string): boolean {
+  const code = ch.codePointAt(0)!;
+  return code >= 0x05D0 && code <= 0x05EA;
+}
+
 /**
- * Set text content of an element, optionally wrapping each kamatz katan
- * vowel mark (U+05C7) in a styled span so only the vowel itself is marked.
+ * Set text content of an element, optionally wrapping each consonant+kamatz_katan
+ * grapheme cluster in a styled span to mark kamatz katan visually.
  */
 function setTextWithKamatzMarking(el: HTMLElement, text: string, indicator: string): void {
   if (indicator === 'off' || !text.includes(KAMATZ_KATAN)) {
@@ -13,7 +19,6 @@ function setTextWithKamatzMarking(el: HTMLElement, text: string, indicator: stri
     return;
   }
 
-  // Wrap only the kamatz katan character itself in a styled span
   el.textContent = '';
   let i = 0;
   while (i < text.length) {
@@ -23,15 +28,28 @@ function setTextWithKamatzMarking(el: HTMLElement, text: string, indicator: stri
       break;
     }
 
-    // Text before the kamatz katan
-    if (kamatzPos > i) {
-      el.appendChild(document.createTextNode(text.slice(i, kamatzPos)));
+    // Find the consonant that owns this kamatz katan
+    let consonantStart = kamatzPos - 1;
+    while (consonantStart >= i && !isConsonant(text[consonantStart])) {
+      consonantStart--;
+    }
+    if (consonantStart < i) consonantStart = kamatzPos;
+
+    // Text before the consonant
+    if (consonantStart > i) {
+      el.appendChild(document.createTextNode(text.slice(i, consonantStart)));
     }
 
-    // Wrap just the vowel mark
+    // Find end of grapheme cluster (consonant + all combining marks)
+    let clusterEnd = kamatzPos + 1;
+    while (clusterEnd < text.length && !isConsonant(text[clusterEnd])) {
+      clusterEnd++;
+    }
+
+    // Wrap consonant+kamatz cluster
     const span = document.createElement('span');
-    span.className = `kamatz-katan kamatz-${indicator}`;
-    span.textContent = KAMATZ_KATAN;
+    span.className = 'kamatz-katan kamatz-dot';
+    span.textContent = text.slice(consonantStart, clusterEnd);
     el.appendChild(span);
 
     i = kamatzPos + 1;
