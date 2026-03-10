@@ -142,13 +142,35 @@ body {
   position: relative;
 }
 
+/* Remove word padding when it contains syllable spans to avoid highlight gaps */
+.word:has(.syllable) {
+  padding: 2px 0;
+}
+
 .word:hover {
   background: var(--word-hover);
 }
 
 .syllable {
+  padding: 0 2px;
   border-radius: 3px;
   transition: background 0.1s;
+  unicode-bidi: isolate;
+}
+
+/* First/last syllable get outer padding to match word-level spacing */
+.syllable:first-child {
+  padding-inline-end: 2px;
+  border-radius: 3px 0 0 3px;
+}
+
+.syllable:last-child {
+  padding-inline-start: 2px;
+  border-radius: 0 3px 3px 0;
+}
+
+.syllable:only-child {
+  border-radius: 3px;
 }
 
 /* Highlight states */
@@ -160,7 +182,7 @@ body {
   background: var(--highlight-color);
 }
 
-/* Underline cursor for current position */
+/* Underline cursor for current position (word mode only) */
 .word.highlighted::after {
   content: '';
   display: block;
@@ -171,6 +193,49 @@ body {
   height: 3px;
   background: var(--highlight-color);
   border-radius: 2px;
+}
+
+/* Suppress word underline when a syllable inside is highlighted */
+.word:has(.syllable.highlighted)::after {
+  display: none;
+}
+
+/* ===== Divine Name (Tetragrammaton) ===== */
+.divine-name {
+  letter-spacing: 0.02em;
+}
+
+/* ===== Kamatz Katan Indicators ===== */
+/* Tint: subtle background tint */
+.kamatz-tint {
+  background: rgba(70, 130, 180, 0.12);
+  border-radius: 3px;
+}
+
+/* Dot: small colored dot below */
+.kamatz-dot {
+  position: relative;
+}
+
+.kamatz-dot::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: steelblue;
+}
+
+/* Underline: thin colored underline */
+.kamatz-underline {
+  text-decoration: underline;
+  text-decoration-color: steelblue;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 /* ===== Footer Navigation ===== */

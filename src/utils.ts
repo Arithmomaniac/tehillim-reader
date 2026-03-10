@@ -50,3 +50,34 @@ export function shuffleArray<T>(arr: T[]): T[] {
   }
   return copy;
 }
+
+// Regex to detect the Tetragrammaton consonants (yod-heh-vav-heh) after stripping nikkud
+const YHVH_CONSONANTS = /^\u05D9\u05D4\u05D5\u05D4$/;
+
+/** Strip all nikkud/vowel marks from Hebrew text (U+05B0–U+05C7) */
+export function stripNikkud(text: string): string {
+  return text.replace(/[\u05B0-\u05C7]/g, '');
+}
+
+/** Check if a word is the Tetragrammaton (YHVH) */
+export function isDivineName(wordText: string): boolean {
+  return YHVH_CONSONANTS.test(stripNikkud(wordText));
+}
+
+type DivineNameForm = 'adonai' | 'elohim';
+
+/**
+ * Determine the pronunciation form of the Tetragrammaton.
+ * Elohim form has chataf segol (U+05B1) on the yod; Adonai form does not.
+ */
+export function getDivineNameForm(wordText: string): DivineNameForm {
+  // The Elohim form has chataf segol (U+05B1) — check if the yod (first letter) has it
+  const yodIdx = wordText.indexOf('\u05D9');
+  if (yodIdx >= 0 && yodIdx + 1 < wordText.length && wordText[yodIdx + 1] === '\u05B1') {
+    return 'elohim';
+  }
+  return 'adonai';
+}
+
+// Pre-computed syllable breakdown for Elohim-form Tetragrammaton
+const ELOHIM_YHVH_SYLLABLES = ['יֱ', 'הֹ', 'וִה'];

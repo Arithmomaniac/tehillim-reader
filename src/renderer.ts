@@ -1,5 +1,12 @@
 import { Chapter, NavigationPosition, AppSettings } from './types';
-import { toHebrewNumeral } from './utils';
+import { toHebrewNumeral, isDivineName, getDivineNameForm, stripNikkud } from './utils';
+
+const KAMATZ_KATAN = '\u05C7';
+
+/** Check if text contains kamatz katan (U+05C7) */
+function hasKamatzKatan(text: string): boolean {
+  return text.includes(KAMATZ_KATAN);
+}
 
 /**
  * Renders the chapter text with word/syllable spans and manages highlight updates.
@@ -19,7 +26,7 @@ export class Renderer {
   renderChapter(
     chapter: Chapter,
     settings: AppSettings,
-    onWordClick: (verseIndex: number, wordIndex: number) => void
+    onWordClick: (verseIndex: number, wordIndex: number, syllableIndex?: number) => void
   ): void {
     this.titleEl.textContent = `תהילים ${chapter.hebrewNumber}`;
     this.container.innerHTML = '';
@@ -43,19 +50,46 @@ export class Renderer {
         wordSpan.dataset.verse = String(vIdx);
         wordSpan.dataset.word = String(wIdx);
 
-        const syllables = settings.readingMode ? word.syllables : word.syllablesTiberian;
+        // Determine display text and syllables, accounting for Tetragrammaton
+        let displayText = word.text;
+        let syllables = settings.readingMode ? word.syllables : word.syllablesTiberian;
+        const divine = isDivineName(word.text);
+
+        if (divine) {
+          wordSpan.classList.add('divine-name');
+          const form = getDivineNameForm(word.text);
+          if (form === 'adonai') {
+            // Adonai form: strip nikkud, show bare consonants, no syllable splitting
+            displayText = stripNikkud(word.text);
+            syllables = [displayText];
+          } else {
+            // Elohim form: keep nikkud, use manual 3-syllable breakdown
+            syllables = ['יֱ', 'הֹ', 'וִה'];
+          }
+        }
 
         if (settings.highlightMode === 'syllable' && syllables.length > 1) {
-          // Render individual syllable spans
+          // Render individual syllable spans with per-syllable click handlers
           for (let sIdx = 0; sIdx < syllables.length; sIdx++) {
             const sylSpan = document.createElement('span');
             sylSpan.className = 'syllable';
             sylSpan.dataset.syllable = String(sIdx);
             sylSpan.textContent = syllables[sIdx];
+            if (settings.kamatzIndicator !== 'off' && hasKamatzKatan(syllables[sIdx])) {
+              sylSpan.classList.add('kamatz-katan', `kamatz-${settings.kamatzIndicator}`);
+            }
+            const capturedSIdx = sIdx;
+            sylSpan.addEventListener('click', (e) => {
+              e.stopPropagation();
+              onWordClick(vIdx, wIdx, capturedSIdx);
+            });
             wordSpan.appendChild(sylSpan);
           }
         } else {
-          wordSpan.textContent = word.text;
+          wordSpan.textContent = displayText;
+          if (settings.kamatzIndicator !== 'off' && hasKamatzKatan(displayText)) {
+            wordSpan.classList.add('kamatz-katan', `kamatz-${settings.kamatzIndicator}`);
+          }
         }
 
         wordSpan.addEventListener('click', () => {

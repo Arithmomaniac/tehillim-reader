@@ -1,8 +1,17 @@
 import { Chapter, WordData, NavigationPosition, AppSettings } from './types';
 import { flattenWords } from './data-loader';
+import { isDivineName, getDivineNameForm, stripNikkud } from './utils';
 
-/** Get the active syllable array for a word based on reading mode */
+/** Get the active syllable array for a word based on reading mode and divine name handling */
 function getWordSyllables(word: WordData, settings: AppSettings): string[] {
+  if (isDivineName(word.text)) {
+    const form = getDivineNameForm(word.text);
+    if (form === 'adonai') {
+      return [stripNikkud(word.text)];
+    }
+    // Elohim form: 3 syllables
+    return ['יֱ', 'הֹ', 'וִה'];
+  }
   return settings.readingMode ? word.syllables : word.syllablesTiberian;
 }
 
@@ -142,11 +151,11 @@ export class Navigator {
     return false; // At beginning of chapter
   }
 
-  /** Jump to a specific word by verse and word index */
-  jumpTo(verseIndex: number, wordIndex: number): void {
+  /** Jump to a specific word by verse and word index, optionally to a specific syllable */
+  jumpTo(verseIndex: number, wordIndex: number, syllableIndex?: number): void {
     this.pos.verseIndex = verseIndex;
     this.pos.wordIndex = wordIndex;
-    this.pos.syllableIndex = 0;
+    this.pos.syllableIndex = syllableIndex ?? 0;
     this.onPositionChange(this.pos);
   }
 

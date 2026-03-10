@@ -25,6 +25,7 @@ export interface WordData {
 export type HighlightMode = 'word' | 'syllable';
 export type ChapterOrder = 'sequential' | 'random';
 export type ThemeMode = 'warm' | 'light' | 'dark';
+export type KamatzIndicator = 'off' | 'tint' | 'dot' | 'underline';
 
 export interface AppSettings {
   highlightMode: HighlightMode;
@@ -34,6 +35,7 @@ export interface AppSettings {
   autoAdvance: boolean;
   theme: ThemeMode;
   readingMode: boolean; // true = casual/traditional, false = Tiberian/academic
+  kamatzIndicator: KamatzIndicator;
 }
 
 export interface NavigationPosition {
@@ -51,4 +53,5 @@ export const DEFAULT_SETTINGS: AppSettings = {
   autoAdvance: true,
   theme: 'warm',
   readingMode: true,
+  kamatzIndicator: 'off',
 };

@@ -39,8 +39,8 @@ class TehillimReaderApp {
       this.renderer.updateHighlight(pos, this.settings);
     });
 
-    this.renderer.renderChapter(chapter, this.settings, (vIdx, wIdx) => {
-      this.navigator.jumpTo(vIdx, wIdx);
+    this.renderer.renderChapter(chapter, this.settings, (vIdx, wIdx, sIdx) => {
+      this.navigator.jumpTo(vIdx, wIdx, sIdx);
     });
 
     // Highlight the first word
@@ -196,6 +196,14 @@ class TehillimReaderApp {
       this.applyAndSave();
     });
 
+    // Kamatz katan indicator
+    for (const mode of ['off', 'tint', 'dot', 'underline'] as const) {
+      document.getElementById(`kamatz-${mode}`)!.addEventListener('click', () => {
+        this.settings.kamatzIndicator = mode;
+        this.applyAndSave();
+      });
+    }
+
     // Theme toggle
     for (const theme of ['warm', 'light', 'dark'] as const) {
       document.getElementById(`theme-${theme}`)!.addEventListener('click', () => {
@@ -266,8 +274,8 @@ class TehillimReaderApp {
     // Re-render with new mode
     const chapter = this.data.chapters.find(c => c.number === this.currentChapterNum)!;
     const pos = this.navigator.getPosition();
-    this.renderer.renderChapter(chapter, this.settings, (vIdx, wIdx) => {
-      this.navigator.jumpTo(vIdx, wIdx);
+    this.renderer.renderChapter(chapter, this.settings, (vIdx, wIdx, sIdx) => {
+      this.navigator.jumpTo(vIdx, wIdx, sIdx);
     });
     this.renderer.updateHighlight(pos, this.settings);
   }
@@ -293,6 +301,11 @@ class TehillimReaderApp {
 
     // Reading mode
     (document.getElementById('reading-mode') as HTMLInputElement).checked = this.settings.readingMode;
+
+    // Kamatz indicator
+    for (const mode of ['off', 'tint', 'dot', 'underline']) {
+      document.getElementById(`kamatz-${mode}`)!.classList.toggle('active', this.settings.kamatzIndicator === mode);
+    }
 
     // Theme
     for (const theme of ['warm', 'light', 'dark']) {
