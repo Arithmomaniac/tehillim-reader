@@ -119,15 +119,75 @@ function containsYHVH(word: string): boolean {
   return YHVH_RE.test(word.replace(/[\u0591-\u05C7]/g, ''));
 }
 
+/** Hebrew consonant range U+05D0–U+05EA */
+function isConsonant(ch: string): boolean {
+  const code = ch.codePointAt(0)!;
+  return code >= 0x05D0 && code <= 0x05EA;
+}
+
+/**
+ * Split text into consonant groups (consonant + following combining marks).
+ * Trailing non-consonant chars attach to the last group.
+ */
+function splitIntoConsonantGroups(text: string): string[] {
+  const groups: string[] = [];
+  let current = '';
+  for (const ch of text) {
+    if (isConsonant(ch) && current.length > 0) {
+      groups.push(current);
+      current = '';
+    }
+    current += ch;
+  }
+  if (current.length > 0) {
+    if (groups.length > 0 && !isConsonant(current[0])) {
+      groups[groups.length - 1] += current;
+    } else {
+      groups.push(current);
+    }
+  }
+  return groups;
+}
+
+/**
+ * Get syllables preserving original Masoretic character ordering.
+ * Uses havarotjs for syllable boundaries but maps them back to the
+ * original text to avoid vowel-mark displacement (e.g., cholam on vav).
+ */
 function getSyllables(word: string, opts: Record<string, unknown> = {}): string[] {
   if (containsYHVH(word)) {
     return [word];
   }
   try {
     const text = new Text(word, opts);
-    const syllables = text.syllables.map(s => s.text);
-    if (syllables.length > 0 && syllables.join('').length > 0) {
-      return syllables;
+    const hSyllables = text.syllables;
+    if (hSyllables.length === 0) return [word];
+
+    const consonantsPerSyllable = hSyllables.map(s => s.clusters.length);
+    const groups = splitIntoConsonantGroups(word);
+
+    const result: string[] = [];
+    let groupIdx = 0;
+    for (const count of consonantsPerSyllable) {
+      let syllableText = '';
+      for (let c = 0; c < count && groupIdx < groups.length; c++) {
+        syllableText += groups[groupIdx++];
+      }
+      if (syllableText.length > 0) {
+        result.push(syllableText);
+      }
+    }
+    while (groupIdx < groups.length) {
+      if (result.length > 0) {
+        result[result.length - 1] += groups[groupIdx];
+      } else {
+        result.push(groups[groupIdx]);
+      }
+      groupIdx++;
+    }
+
+    if (result.length > 0 && result.join('').length > 0) {
+      return result;
     }
   } catch {
     // Fallback: return the whole word as a single syllable

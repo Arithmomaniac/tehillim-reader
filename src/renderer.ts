@@ -3,9 +3,60 @@ import { toHebrewNumeral, isDivineName, getDivineNameForm, stripNikkud } from '.
 
 const KAMATZ_KATAN = '\u05C7';
 
-/** Check if text contains kamatz katan (U+05C7) */
-function hasKamatzKatan(text: string): boolean {
-  return text.includes(KAMATZ_KATAN);
+/** Hebrew consonant range U+05D0–U+05EA */
+function isConsonant(ch: string): boolean {
+  const code = ch.codePointAt(0)!;
+  return code >= 0x05D0 && code <= 0x05EA;
+}
+
+/**
+ * Set text content of an element, optionally wrapping kamatz katan graphemes
+ * in styled spans so only the kamatz character itself is visually marked.
+ */
+function setTextWithKamatzMarking(el: HTMLElement, text: string, indicator: string): void {
+  if (indicator === 'off' || !text.includes(KAMATZ_KATAN)) {
+    el.textContent = text;
+    return;
+  }
+
+  // Split text around kamatz katan, wrapping consonant+kamatz in a span
+  el.textContent = '';
+  let i = 0;
+  while (i < text.length) {
+    // Look ahead: is the NEXT combining mark a kamatz katan?
+    const kamatzPos = text.indexOf(KAMATZ_KATAN, i);
+    if (kamatzPos === -1) {
+      // No more kamatz katan — append rest as text
+      el.appendChild(document.createTextNode(text.slice(i)));
+      break;
+    }
+
+    // Find the consonant that owns this kamatz katan (immediately preceding)
+    let consonantStart = kamatzPos - 1;
+    while (consonantStart >= i && !isConsonant(text[consonantStart])) {
+      consonantStart--;
+    }
+    if (consonantStart < i) consonantStart = kamatzPos;
+
+    // Append text before the consonant
+    if (consonantStart > i) {
+      el.appendChild(document.createTextNode(text.slice(i, consonantStart)));
+    }
+
+    // Find end of the grapheme cluster (consonant + all combining marks including kamatz katan)
+    let clusterEnd = kamatzPos + 1;
+    while (clusterEnd < text.length && !isConsonant(text[clusterEnd])) {
+      clusterEnd++;
+    }
+
+    // Wrap the consonant+kamatz cluster in a styled span
+    const span = document.createElement('span');
+    span.className = `kamatz-katan kamatz-${indicator}`;
+    span.textContent = text.slice(consonantStart, clusterEnd);
+    el.appendChild(span);
+
+    i = clusterEnd;
+  }
 }
 
 /**
@@ -74,10 +125,7 @@ export class Renderer {
             const sylSpan = document.createElement('span');
             sylSpan.className = 'syllable';
             sylSpan.dataset.syllable = String(sIdx);
-            sylSpan.textContent = syllables[sIdx];
-            if (settings.kamatzIndicator !== 'off' && hasKamatzKatan(syllables[sIdx])) {
-              sylSpan.classList.add('kamatz-katan', `kamatz-${settings.kamatzIndicator}`);
-            }
+            setTextWithKamatzMarking(sylSpan, syllables[sIdx], settings.kamatzIndicator);
             const capturedSIdx = sIdx;
             sylSpan.addEventListener('click', (e) => {
               e.stopPropagation();
@@ -86,10 +134,7 @@ export class Renderer {
             wordSpan.appendChild(sylSpan);
           }
         } else {
-          wordSpan.textContent = displayText;
-          if (settings.kamatzIndicator !== 'off' && hasKamatzKatan(displayText)) {
-            wordSpan.classList.add('kamatz-katan', `kamatz-${settings.kamatzIndicator}`);
-          }
+          setTextWithKamatzMarking(wordSpan, displayText, settings.kamatzIndicator);
         }
 
         wordSpan.addEventListener('click', () => {

@@ -142,9 +142,11 @@ body {
   position: relative;
 }
 
-/* Remove word padding when it contains syllable spans to avoid highlight gaps */
+/* Remove padding and positioning context when word has syllable spans
+   to prevent combining character (nikkud/dagesh) displacement */
 .word:has(.syllable) {
-  padding: 2px 0;
+  padding: 0;
+  position: static;
 }
 
 .word:hover {
@@ -152,25 +154,8 @@ body {
 }
 
 .syllable {
-  padding: 0 2px;
   border-radius: 3px;
   transition: background 0.1s;
-  unicode-bidi: isolate;
-}
-
-/* First/last syllable get outer padding to match word-level spacing */
-.syllable:first-child {
-  padding-inline-end: 2px;
-  border-radius: 3px 0 0 3px;
-}
-
-.syllable:last-child {
-  padding-inline-start: 2px;
-  border-radius: 0 3px 3px 0;
-}
-
-.syllable:only-child {
-  border-radius: 3px;
 }
 
 /* Highlight states */
@@ -205,14 +190,13 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* ===== Kamatz Katan Indicators ===== */
-/* Tint: subtle background tint */
+/* ===== Kamatz Katan Indicators (character-level) ===== */
+/* Tint: color the kamatz katan grapheme */
 .kamatz-tint {
-  background: rgba(70, 130, 180, 0.12);
-  border-radius: 3px;
+  color: steelblue;
 }
 
-/* Dot: small colored dot below */
+/* Dot: small colored dot below the character */
 .kamatz-dot {
   position: relative;
 }
@@ -230,7 +214,7 @@ body {
   background: steelblue;
 }
 
-/* Underline: thin colored underline */
+/* Underline: thin colored underline on the character */
 .kamatz-underline {
   text-decoration: underline;
   text-decoration-color: steelblue;
