@@ -25,7 +25,7 @@ export interface WordData {
 export type HighlightMode = 'word' | 'syllable';
 export type ChapterOrder = 'sequential' | 'random';
 export type ThemeMode = 'warm' | 'light' | 'dark';
-export type KamatzIndicator = 'off' | 'tint' | 'dot' | 'underline';
+export type KamatzIndicator = 'off' | 'tint' | 'bold' | 'dot';
 
 export interface AppSettings {
   highlightMode: HighlightMode;

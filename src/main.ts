@@ -197,7 +197,7 @@ class TehillimReaderApp {
     });
 
     // Kamatz katan indicator
-    for (const mode of ['off', 'tint', 'dot', 'underline'] as const) {
+    for (const mode of ['off', 'tint', 'bold', 'dot'] as const) {
       document.getElementById(`kamatz-${mode}`)!.addEventListener('click', () => {
         this.settings.kamatzIndicator = mode;
         this.applyAndSave();
@@ -303,7 +303,7 @@ class TehillimReaderApp {
     (document.getElementById('reading-mode') as HTMLInputElement).checked = this.settings.readingMode;
 
     // Kamatz indicator
-    for (const mode of ['off', 'tint', 'dot', 'underline']) {
+    for (const mode of ['off', 'tint', 'bold', 'dot']) {
       document.getElementById(`kamatz-${mode}`)!.classList.toggle('active', this.settings.kamatzIndicator === mode);
     }
 

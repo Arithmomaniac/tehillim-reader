@@ -214,12 +214,9 @@ body {
   background: steelblue;
 }
 
-/* Underline: thin colored underline on the character */
-.kamatz-underline {
-  text-decoration: underline;
-  text-decoration-color: steelblue;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+/* Bold: make the kamatz katan grapheme bold */
+.kamatz-bold {
+  font-weight: 700;
 }
 
 /* ===== Footer Navigation ===== */
